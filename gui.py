@@ -1,5 +1,10 @@
 import customtkinter as ctk
-from checker import check_password_strength
+
+from checker import (
+    check_password_strength,
+    generate_secure_password,
+    check_data_breach
+)
 
 # Theme
 ctk.set_appearance_mode("dark")
@@ -11,7 +16,7 @@ class PasswordCheckerApp:
         self.root = ctk.CTk()
 
         self.root.title("Password Strength Checker")
-        self.root.geometry("700x500")
+        self.root.geometry("750x620")
         self.root.resizable(False, False)
 
         # Title
@@ -34,7 +39,7 @@ class PasswordCheckerApp:
         # Password Entry
         self.password_entry = ctk.CTkEntry(
             self.root,
-            width=420,
+            width=450,
             height=45,
             show="*",
             placeholder_text="Enter Password...",
@@ -59,12 +64,26 @@ class PasswordCheckerApp:
             self.root,
             text="Check Password Strength",
             command=self.check_strength,
-            width=250,
+            width=260,
             height=50,
             font=("Segoe UI", 16, "bold"),
             corner_radius=12
         )
-        self.check_button.pack(pady=25)
+        self.check_button.pack(pady=15)
+
+        # Generate Password Button
+        self.generate_button = ctk.CTkButton(
+            self.root,
+            text="Generate Secure Password",
+            command=self.generate_password,
+            width=260,
+            height=50,
+            font=("Segoe UI", 16, "bold"),
+            fg_color="#4444ff",
+            hover_color="#2222aa",
+            corner_radius=12
+        )
+        self.generate_button.pack(pady=10)
 
         # Result Label
         self.result_label = ctk.CTkLabel(
@@ -77,8 +96,8 @@ class PasswordCheckerApp:
         # Feedback Box
         self.feedback_box = ctk.CTkTextbox(
             self.root,
-            width=520,
-            height=140,
+            width=580,
+            height=180,
             font=("Segoe UI", 13),
             corner_radius=12
         )
@@ -100,6 +119,18 @@ class PasswordCheckerApp:
         else:
             self.password_entry.configure(show="*")
 
+    # Generate Secure Password
+    def generate_password(self):
+        password = generate_secure_password()
+
+        self.password_entry.delete(0, "end")
+        self.password_entry.insert(0, password)
+
+        self.result_label.configure(
+            text="Secure Password Generated",
+            text_color="cyan"
+        )
+
     # Check Password Strength
     def check_strength(self):
         password = self.password_entry.get()
@@ -120,6 +151,7 @@ class PasswordCheckerApp:
 
         self.feedback_box.delete("1.0", "end")
 
+        # Feedback Messages
         if feedback:
             for item in feedback:
                 self.feedback_box.insert(
@@ -129,7 +161,21 @@ class PasswordCheckerApp:
         else:
             self.feedback_box.insert(
                 "end",
-                "Excellent! Your password is secure."
+                "✅ Excellent! Your password is secure.\n"
+            )
+
+        # Data Breach Check
+        breach_count = check_data_breach(password)
+
+        if breach_count:
+            self.feedback_box.insert(
+                "end",
+                f"\n⚠ WARNING: Password found in {breach_count} data breaches!\n"
+            )
+        else:
+            self.feedback_box.insert(
+                "end",
+                "\n✅ Password not found in known data breaches.\n"
             )
 
     # Run App
