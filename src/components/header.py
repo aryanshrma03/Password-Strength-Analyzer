@@ -1,0 +1,21 @@
+import customtkinter as ctk
+
+
+def create_header(parent):
+    frame = ctk.CTkFrame(parent, fg_color="transparent")
+    frame.pack(fill="x", padx=30, pady=(25, 10))
+
+    ctk.CTkLabel(
+        frame,
+        text="🔐 Password Strength Analyzer",
+        font=("Segoe UI", 28, "bold"),
+    ).pack(anchor="w")
+
+    ctk.CTkLabel(
+        frame,
+        text="Analyze password security, identify weaknesses, and improve your security posture.",
+        text_color="#9aa4b2",
+        font=("Segoe UI", 13),
+    ).pack(anchor="w", pady=(5, 0))
+
+    return frame
